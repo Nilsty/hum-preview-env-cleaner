@@ -32,10 +32,10 @@ def job():
     if resp_env_list.status_code == 200:
         for env in env_list:
             if re.fullmatch(preview_env_regex, env['id']):
-                print(f"ENV: {env['id']}, created: {env['created_at']} matches regex.")
-                env_created_date = datetime.strptime(env['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z")
-                if env_created_date <= max_env_age:
-                    print(f"{env['id']} is older than {HUMANITEC_ENV_MAX_AGE_DAYS} day(s).")
+                print(f"ENV: {env['id']}, last deployed: {env['last_deploy']['created_at']} matches regex.")
+                env_last_deploy_date = datetime.strptime(env['last_deploy']['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z")
+                if env_last_deploy_date <= max_env_age:
+                    print(f"{env['id']}'s last deployment is older than {HUMANITEC_ENV_MAX_AGE_DAYS} day(s).")
                     resp_env_delete = requests.delete(f"{HUMANITEC_URL}/orgs/{HUMANITEC_ORG}/apps/{HUMANITEC_APP}/envs/{env['id']}", headers=headers)
                     if resp_env_delete.status_code == 204:
                         print(f"ENV {env['id']} has been deleted.")
